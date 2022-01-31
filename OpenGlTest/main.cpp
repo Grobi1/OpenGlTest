@@ -26,6 +26,7 @@
 //Buffers
 GLuint buffers;
 
+//--------------------------------------------------------------
 Vector3D NormalVector(float * a, float * b, float * c)
 {
     Vector3D x = Vector3D(a) - Vector3D(b);
@@ -35,6 +36,7 @@ Vector3D NormalVector(float * a, float * b, float * c)
     return normalVector;
 }
 
+//--------------------------------------------------------------
 void Initialize()
 {
     //Initialize GL matrices with identity matrix
@@ -57,7 +59,7 @@ void Initialize()
 
 
     //Lighting
-    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat mat_specular[] = { 1, 1, 1, 1 };
     GLfloat mat_shininess[] = { 20.0 };
     GLfloat light_position[] = { 0.0, 0.0, 1.0, 0.0 }; //light straight from the front 
@@ -84,6 +86,7 @@ void Initialize()
 
 }
 
+//--------------------------------------------------------------
 void RenderCube()
 {
     glBegin(GL_QUADS);
@@ -169,49 +172,37 @@ void RenderCube()
     glEnd();
 }
 
-
-// Code by https://gist.github.com/gyng/8939105
-void RenderTorus(double r = 0.07, double c = 0.35,
-    int rSeg = 50, int cSeg = 100,
-    int texture = 0)
+//--------------------------------------------------------------
+void RenderTorus(double r = 0.08, double c = 0.35, int rSeg = 50, int cSeg = 100)
 {
-    glFrontFace(GL_CW);
 
-    //glBindTexture(GL_TEXTURE_2D, texture);
-    //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-    const double PI = 3.1415926535897932384626433832795;
-    const double TAU = 2 * PI;
+    const double TAU = 2 * M_PI;
 
     for (int i = 0; i < rSeg; i++)
     {
         glBegin(GL_QUAD_STRIP);
-        for (int j = 0; j <= cSeg; j++) 
+        for (int j = 0; j <= cSeg; j++)
         {
-            for (int k = 0; k <= 1; k++) 
+            for (int k = 0; k <= 1; k++)
             {
-                double s = (i + k) % rSeg + 0.5;
-                double t = j % (cSeg + 1);
-
-                double x = (c + r * cos(s * TAU / rSeg)) * cos(t * TAU / cSeg);
-                double y = (c + r * cos(s * TAU / rSeg)) * sin(t * TAU / cSeg);
-                double z = r * sin(s * TAU / rSeg);
-
-                double u = (i + k) / (float)rSeg;
-                double v = t / (float)cSeg;
-
+                double rho = TAU / rSeg * (i + k);
+                double phi = TAU / cSeg * j;
+                double x = cos(phi) * (c + cos(rho) * r);
+                double y = sin(phi) * (c + cos(rho) * r);
+                double z = sin(rho) * r;
+                double u = cos(rho) * cos(phi);
+                double v = cos(rho) * sin(phi);
+                double w = sin(rho);
                 glColor3b(i, j, 50);
-                //glTexCoord2d(u, v);
-                glNormal3f(2 * x, 2 * y, 2 * z);
+                glNormal3f(-u, -v, -w);
                 glVertex3d(2 * x, 2 * y, 2 * z);
             }
         }
         glEnd();
     }
-
-    glFrontFace(GL_CCW);
 }
 
+//--------------------------------------------------------------
 void Render()
 {
     glMatrixMode(GL_MODELVIEW);
@@ -247,11 +238,13 @@ void RotateCamera(float angle, float x, float y, float z)
 }
 
 
+//--------------------------------------------------------------
 //int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 //{
 //    Initialize();
 //}
 
+//--------------------------------------------------------------
 int main()
 {
     OpenGlWindow window;
