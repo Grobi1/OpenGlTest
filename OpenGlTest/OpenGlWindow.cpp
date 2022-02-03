@@ -1,15 +1,48 @@
 #include <Windows.h>
+#include <math.h>
+#include <windowsx.h>
 #include "OpenGlWindow.h"
 #include <gl/GL.h>
 
 //--------------------------------------------------------------
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    static int initalX = 0;
+    static int initalY = 0;
+    static bool mouseDown = false;
+    static int endX = 0;
+    static int endY = 0;
     switch (msg)
     {
     case WM_CLOSE: DestroyWindow(hwnd); break;
     case WM_DESTROY: PostQuitMessage(0); break;
     case WM_SIZE: glViewport(0, 0, LOWORD(lParam), HIWORD(lParam)); break;
+    case WM_LBUTTONDOWN:
+    {
+        mouseDown = true;
+        initalX = GET_X_LPARAM(lParam);
+        initalY = GET_Y_LPARAM(lParam);
+        break;
+    }
+    case WM_LBUTTONUP:
+    {
+        mouseDown = false;
+        break;
+    }
+    case WM_MOUSEMOVE:
+    {
+        if (!mouseDown)
+            break;
+        int offsetX = initalX - GET_X_LPARAM(lParam);
+        int offsetY = initalY - GET_Y_LPARAM(lParam);
+        initalX = GET_X_LPARAM(lParam);
+        initalY = GET_Y_LPARAM(lParam);
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glRotatef(2, offsetY, offsetX, 0);
+        glPushMatrix();
+        break;
+    }
     default: return DefWindowProc(hwnd, msg, wParam, lParam);
     }
     return 0;

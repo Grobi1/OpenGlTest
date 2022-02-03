@@ -25,6 +25,43 @@
 
 //Buffers
 GLuint buffers;
+GLuint texture;
+
+// Create checkerboard texture
+#define textureHeight 1024
+#define textureWidth 1024
+static GLubyte checkImage[textureHeight][textureWidth][4];
+
+//--------------------------------------------------------------
+void GenerateTexture()
+{
+    for (int i = 0; i < textureHeight; i++)
+    {
+        for (int j = 0; j < textureWidth; j++)
+        {
+            double x = (double)j / ((double)textureWidth - 1);
+            double y = (double)i / ((double)textureHeight - 1);
+            x = (x - 0.5) * 2;
+            y = (y - 0.5) * 2;
+
+            double r = sqrt(x * x + y * y);
+            if (r > 1)
+            {
+                checkImage[i][j][0] = (GLubyte)255;
+                checkImage[i][j][1] = (GLubyte)0;
+                checkImage[i][j][2] = (GLubyte)0;
+                checkImage[i][j][3] = (GLubyte)255;
+            }
+            else
+            {
+                checkImage[i][j][0] = (GLubyte)((1-r) * 255);
+                checkImage[i][j][1] = (GLubyte)((1-r) * 255);
+                checkImage[i][j][2] = (GLubyte)((1-r) * 255);
+                checkImage[i][j][3] = (GLubyte)255;
+            }
+        }
+    }
+}
 
 //--------------------------------------------------------------
 Vector3D NormalVector(float * a, float * b, float * c)
@@ -44,7 +81,7 @@ void Initialize()
     glLoadIdentity();
 
     //glOrtho(-1, 1, 1, -1, 1, -1);
-    glFrustum(-1, 1, 1, -1, 1, -1);
+    //glFrustum(-1, 1, 1, -1, 1, -1);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -52,12 +89,11 @@ void Initialize()
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    //glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
-
-
+    glEnable(GL_TEXTURE_2D);
     //Lighting
     GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat mat_specular[] = { 1, 1, 1, 1 };
@@ -84,96 +120,119 @@ void Initialize()
     //glBufferData(GL_ARRAY_BUFFER_ARB, sizeof(vertices),
     //    vertices, GL_STATIC_DRAW_ARB);
 
+    //Texture
+    GenerateTexture();
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkImage);
+    
+    //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    glEnable(GL_TEXTURE_GEN_S);
+    glEnable(GL_TEXTURE_GEN_T);
+    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+
+    glMatrixMode(GL_TEXTURE);
+    glTranslatef(-1, -1, 0);
+    glScalef(2, 2, 0);
+    glMatrixMode(GL_PROJECTION);
+
 }
 
 //--------------------------------------------------------------
-void RenderCube()
-{
+void RenderCube(float size = 0.25)
+{  
     glBegin(GL_QUADS);
-    //Front 
+    //Back 
     {
         //Clockwise
-        float a[] = { -0.25, -0.25, 0.25 }; //Upper left
-        float b[] = { -0.25, 0.25, 0.25 }; //Lower Left
-        float c[] = { 0.25, 0.25, 0.25 }; //Lower Right
-        float d[] = { 0.25, -0.25, 0.25 }; //Upper Right
-        glColor3b(100, 100, 0);
+        float a[] = { -size, -size, size }; //Upper left
+        float b[] = { -size, size, size }; //Lower Left
+        float c[] = { size, size, size }; //Lower Right
+        float d[] = { size, -size, size }; //Upper Right
+        //glColor3b(100, 100, 0);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
-    //Back
+    //Front
     {
-        float a[] = { -0.25, -0.25, -0.25 };
-        float b[] = { 0.25, -0.25, -0.25 }; 
-        float c[] = { 0.25, 0.25, -0.25 };
-        float d[] = { -0.25, 0.25, -0.25 };
-        glColor3b(100, 0, 0);
+        float a[] = { -size, -size, -size };
+        float b[] = { size, -size, -size }; 
+        float c[] = { size, size, -size };
+        float d[] = { -size, size, -size };
+        //glColor3b(100, 0, 0);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
     //Bottom
     {
-        float a[] = { 0.25, -0.25, 0.25 };
-        float b[] = { -0.25, -0.25, 0.25 };
-        float c[] = { -0.25, -0.25, -0.25 };
-        float d[] = { 0.25, -0.25, -0.25 };
-        glColor3b(0, 0, 100);
+        float a[] = { size, -size, size };
+        float b[] = { -size, -size, size };
+        float c[] = { -size, -size, -size };
+        float d[] = { size, -size, -size };
+        //glColor3b(0, 0, 100);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
     //Top
     {
-        float a[] = { -0.25, 0.25, 0.25 };
-        float b[] = { 0.25, 0.25, 0.25 };
-        float c[] = { 0.25, 0.25, -0.25 };
-        float d[] = { -0.25, 0.25, -0.25 };
-        glColor3b(0, 100, 0);
+        float a[] = { -size, size, size };
+        float b[] = { size, size, size };
+        float c[] = { size, size, -size };
+        float d[] = { -size, size, -size };
+        //glColor3b(0, 100, 0);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
     //Left
     {
-        float a[] = { -0.25, 0.25, 0.25 };
-        float b[] = { -0.25, -0.25, 0.25 };
-        float c[] = { -0.25, -0.25, -0.25 };
-        float d[] = { -0.25, 0.25, -0.25 };
-        glColor3b(100, 100, 100);
+        float a[] = { -size, size, size };
+        float b[] = { -size, -size, size };
+        float c[] = { -size, -size, -size };
+        float d[] = { -size, size, -size };
+        //glColor3b(100, 100, 100);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
     //Right
     {
-        float a[] = { 0.25, -0.25, 0.25 };
-        float b[] = { 0.25, 0.25, 0.25 };
-        float c[] = { 0.25, 0.25, -0.25 };
-        float d[] = { 0.25, -0.25, -0.25 };
-        glColor3b(0, 100, 100);
+        float a[] = { size, -size, size };
+        float b[] = { size, size, size };
+        float c[] = { size, size, -size };
+        float d[] = { size, -size, -size };
+        //glColor3b(0, 100, 100);
         glNormal3fv(NormalVector(a, b, c).Data());
-        glVertex3fv(a);
-        glVertex3fv(b);
-        glVertex3fv(c);
-        glVertex3fv(d);
+        glTexCoord2f(0, 0); glVertex3fv(a);
+        glTexCoord2f(0, 1); glVertex3fv(b);
+        glTexCoord2f(1, 1); glVertex3fv(c);
+        glTexCoord2f(1, 0); glVertex3fv(d);
     }
     glEnd();
 }
 
 //--------------------------------------------------------------
-void RenderTorus(double r = 0.08, double c = 0.35, int rSeg = 50, int cSeg = 100)
+void RenderTorus(double r = 0.08, double c = 0.35, int rSeg = 150, int cSeg = 100)
 {
 
     const double TAU = 2 * M_PI;
@@ -185,16 +244,37 @@ void RenderTorus(double r = 0.08, double c = 0.35, int rSeg = 50, int cSeg = 100
         {
             for (int k = 0; k <= 1; k++)
             {
-                double rho = TAU / rSeg * (i + k);
+                double rho = TAU / rSeg * (i + k); // Angle in rad
                 double phi = TAU / cSeg * j;
                 double x = cos(phi) * (c + cos(rho) * r);
                 double y = sin(phi) * (c + cos(rho) * r);
+                //double x = (c + r * cos(rho)) * cos(phi);
+                //double y = (c + r * cos(rho)) * sin(phi);
                 double z = sin(rho) * r;
                 double u = cos(rho) * cos(phi);
                 double v = cos(rho) * sin(phi);
                 double w = sin(rho);
-                glColor3b(i, j, 50);
+                //glColor3b(i, j, 50);
                 glNormal3f(-u, -v, -w);
+
+
+                //glTexCoord2f(u * 0.5 + 0.5, v * 0.5 + 0.5);
+                //glTexCoord2f(1.0f / (float)rSeg * (i + k), 1.0f / (float)cSeg * j); //maps the full texture from texture coordinate 0-1 on the "two" circles
+                // camera is on position 0,0, so we could omit that. 
+                // Vector camera to Vertex = CameraPostion - Vertex 
+                // Surface normal is bisector
+                // 
+                //glTexCoord2f((j % cSeg / (float)cSeg), ((i + k) % rSeg / (float)rSeg));
+
+
+                //double dotProduct = x * u + y * v + z * w;
+                //Vector3D incident(x, y, z);
+                //Vector3D normal(u, v, w);
+                //incident.Normalize();
+                //normal.Normalize();
+                //Vector3D reflected = incident - normal * dotProduct * 2.0;
+                //glTexCoord2fv(reflected.Data()); 
+
                 glVertex3d(2 * x, 2 * y, 2 * z);
             }
         }
@@ -251,7 +331,6 @@ int main()
     Initialize();
     while (true)
     {
-        RotateCamera(1, 1, 1, 1);
         Render();
         window.SwapBuffer();
         window.Update();

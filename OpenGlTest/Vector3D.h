@@ -14,6 +14,8 @@ public:
     static Vector3D CrossProduct(const Vector3D & a, const Vector3D & b);
 
     Vector3D operator - (const Vector3D & rhs) const;
+    //Vector3D operator * (const Vector3D & rhs) const;
+    Vector3D operator * (const double rhs) const;
 private:
     float _data[3];
 };
