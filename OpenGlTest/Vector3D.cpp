@@ -72,7 +72,7 @@ Vector3D Vector3D::operator - (const Vector3D & rhs) const
 //}
 //
 //--------------------------------------------------------------
-Vector3D Vector3D::operator * (const double rhs) const
+Vector3D Vector3D::operator * (const float rhs) const
 {
     return Vector3D(X() * rhs, Y() * rhs, Z() * rhs);
 }

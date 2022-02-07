@@ -15,7 +15,7 @@ public:
 
     Vector3D operator - (const Vector3D & rhs) const;
     //Vector3D operator * (const Vector3D & rhs) const;
-    Vector3D operator * (const double rhs) const;
+    Vector3D operator * (const float rhs) const;
 private:
     float _data[3];
 };

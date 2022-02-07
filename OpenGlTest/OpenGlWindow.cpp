@@ -3,6 +3,7 @@
 #include <windowsx.h>
 #include "OpenGlWindow.h"
 #include <gl/GL.h>
+#include <algorithm>
 
 //--------------------------------------------------------------
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -16,7 +17,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
     case WM_CLOSE: DestroyWindow(hwnd); break;
     case WM_DESTROY: PostQuitMessage(0); break;
-    case WM_SIZE: glViewport(0, 0, LOWORD(lParam), HIWORD(lParam)); break;
+    case WM_SIZE: 
+    {
+        int width = LOWORD(lParam);
+        int height = HIWORD(lParam);
+        int min = min(width, height);
+
+        glViewport((width - min) / 2, (height - min) / 2, min, min); break;
+    }
     case WM_LBUTTONDOWN:
     {
         mouseDown = true;
@@ -39,9 +47,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         initalY = GET_Y_LPARAM(lParam);
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
-        glRotatef(2, offsetY, offsetX, 0);
+        glRotatef(2, (float)-offsetY, (float)-offsetX, 0);
         glPushMatrix();
         break;
+    }
+    case WM_MOUSEWHEEL:
+    {
+        float zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glTranslatef(0, 0, zDelta / 500.0f);
+        glPushMatrix();
     }
     default: return DefWindowProc(hwnd, msg, wParam, lParam);
     }
@@ -67,15 +83,11 @@ OpenGlWindow::OpenGlWindow()
     HWND window = CreateWindow(windowClass, L"My Window", WS_OVERLAPPEDWINDOW, 0, 0, _width, _height, NULL, NULL, NULL, this);
 
     ShowWindow(window, SW_SHOW);
-    //UpdateWindow(window);
     PIXELFORMATDESCRIPTOR pixelFormatDescriptor;
     memset(&pixelFormatDescriptor, 0, sizeof(PIXELFORMATDESCRIPTOR));
     pixelFormatDescriptor.nSize = sizeof(PIXELFORMATDESCRIPTOR);
     pixelFormatDescriptor.nVersion = 1;
     pixelFormatDescriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-
-    //pixelFormatDescriptor.iPixelType = PFD_TYPE_RGBA;
-
     pixelFormatDescriptor.cColorBits = 32;
     pixelFormatDescriptor.cDepthBits = 32;
 
