@@ -64,7 +64,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (instance->_viewMatrix)
             {
                 float length = sqrtf(offsetX * offsetX + offsetY * offsetX);
-                instance->_viewMatrix->Rotate(length / 100000.f, offsetX / 100.f, offsetY / 100.f, 0);
+                //instance->_viewMatrix->Rotate();
             }
         }
         break;

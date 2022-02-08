@@ -17,46 +17,27 @@ Mat4 Mat4::Reset()
     return *this;
 }
 
+//--------------------------------------------------------------
 Mat4 Mat4::Projection(float aspect, float fov, float near, float far)
 {
-    _data[0][0] = 1 / (aspect * tan(fov / 2));
-    _data[1][1] = 1 / (tan(fov / 2));
-    _data[2][2] = (far + near) / (far - near);
-    _data[2][3] = (2 * far * near) / (far - near);
-    _data[3][2] = -1;
-    return *this;
+    Mat4 proj;
+    proj._data[0][0] = 1 / (aspect * tan(fov / 2));
+    proj._data[1][1] = 1 / (tan(fov / 2));
+    proj._data[2][2] = (far + near) / (far - near);
+    proj._data[2][3] = (2 * far * near) / (far - near);
+    proj._data[3][2] = -1;
+    return proj;
 }
 
 //--------------------------------------------------------------
-Mat4 Mat4::Rotate(float angle, float x, float y, float z)
+Mat4 Mat4::RotateX(float angle)
 {
     Mat4 matX;
-    Mat4 matY;
-    Mat4 matZ;
-
-    matX._data[1][1] = (cosf(angle) * x);
-    matX._data[2][1] = (-sinf(angle) * x);                  
-    matX._data[1][2] = (sinf(angle) * x);
-    matX._data[2][2] = (cosf(angle) * x);
-
-
-    matY._data[0][0] = (cosf(angle) * y);
-    matY._data[2][0] = (sinf(angle) * y); 
-    matY._data[0][2] = (sinf(angle) * y);
-    matY._data[2][2] = (cosf(angle) * y);
-
-    matZ._data[0][0] = (cos(angle) * z);
-    matZ._data[1][0] = (-sinf(angle) * z);
-    matZ._data[0][1] = (sinf(angle) * z);
-    matZ._data[1][1] = (cosf(angle) * z);
-
-
+    matX._data[1][1] = (cosf(angle));
+    matX._data[2][1] = (-sinf(angle));                  
+    matX._data[1][2] = (sinf(angle));
+    matX._data[2][2] = (cosf(angle));
     Multiply(matX);
-    Multiply(matY);
-    Multiply(matZ);
-
-    
-
 
 
     //Mat4 mat;
@@ -106,11 +87,37 @@ Mat4 Mat4::Rotate(float angle, float x, float y, float z)
 }
 
 //--------------------------------------------------------------
+Mat4 Mat4::RotateY(float angle)
+{
+    Mat4 matY;
+    matY._data[0][0] = (cosf(angle));
+    matY._data[2][0] = (-sinf(angle));
+    matY._data[0][2] = (sinf(angle));
+    matY._data[2][2] = (cosf(angle));
+    Multiply(matY);
+    return *this;
+}
+
+//--------------------------------------------------------------
+Mat4 Mat4::RotateZ(float angle)
+{
+    Mat4 matZ;
+    matZ._data[0][0] = (cos(angle));
+    matZ._data[1][0] = (-sinf(angle));
+    matZ._data[0][1] = (sinf(angle));
+    matZ._data[1][1] = (cosf(angle));
+    Multiply(matZ);
+    return *this;
+}
+
+//--------------------------------------------------------------
 Mat4 Mat4::Translate(float x, float y, float z)
 {
-    _data[3][0] += x;
-    _data[3][1] += y;
-    _data[3][2] += z;
+    Mat4 trans;
+    trans._data[3][0] = x;
+    trans._data[3][1] = y;
+    trans._data[3][2] = z;
+    Multiply(trans);
     return *this;
 }
 
@@ -131,9 +138,11 @@ Mat4 Mat4::Multiply(Mat4 mat)
 //--------------------------------------------------------------
 Mat4 Mat4::Scale(float x, float y, float z)
 {
-    _data[0][0] = _data[0][0] * x;
-    _data[1][1] = _data[1][1] * y;
-    _data[2][2] = _data[2][2] * z;
+    Mat4 scale;
+    scale._data[0][0] = x;
+    scale._data[1][1] = y;
+    scale._data[2][2] = z;
+    Multiply(scale);
     return *this;
 }
 
