@@ -4,60 +4,108 @@
 #include "OpenGlWindow.h"
 #include <gl/GL.h>
 #include <algorithm>
+#include "Mat4.h"
+
 
 //--------------------------------------------------------------
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static int initalX = 0;
-    static int initalY = 0;
-    static bool mouseDown = false;
-    static int endX = 0;
-    static int endY = 0;
+    static OpenGlWindow * instance;
+    static Mat4 viewMatrix;
+    static int leftInitalX = 0;
+    static int leftInitalY = 0;
+    static bool leftMouseDown = false;
+    static int rightInitalX = 0;
+    static int rightInitalY = 0;
+    static bool rightMouseDown = false;
+    static int width;
+    static int height;
     switch (msg)
     {
     case WM_CLOSE: DestroyWindow(hwnd); break;
     case WM_DESTROY: PostQuitMessage(0); break;
     case WM_SIZE: 
     {
-        int width = LOWORD(lParam);
-        int height = HIWORD(lParam);
+        width = LOWORD(lParam);
+        height = HIWORD(lParam);
         int min = min(width, height);
 
         glViewport((width - min) / 2, (height - min) / 2, min, min); break;
     }
     case WM_LBUTTONDOWN:
     {
-        mouseDown = true;
-        initalX = GET_X_LPARAM(lParam);
-        initalY = GET_Y_LPARAM(lParam);
+        leftMouseDown = true;
+        leftInitalX = GET_X_LPARAM(lParam);
+        leftInitalY = GET_Y_LPARAM(lParam);
         break;
     }
     case WM_LBUTTONUP:
     {
-        mouseDown = false;
+        leftMouseDown = false;
         break;
     }
     case WM_MOUSEMOVE:
     {
-        if (!mouseDown)
+        if (leftMouseDown)
+        {
+            int offsetX = leftInitalX - GET_X_LPARAM(lParam);
+            int offsetY = leftInitalY - GET_Y_LPARAM(lParam);
+            leftInitalX = GET_X_LPARAM(lParam);
+            leftInitalY = GET_Y_LPARAM(lParam);
+            if (instance->_viewMatrix)
+                instance->_viewMatrix->Translate(-offsetX / ((float)width / 2), offsetY / ((float)height / 2), 0);
+        }
+        if (rightMouseDown)
+        {
+            int offsetX = rightInitalX - GET_X_LPARAM(lParam);
+            int offsetY = rightInitalY - GET_Y_LPARAM(lParam);
+            rightInitalX = GET_X_LPARAM(lParam);
+            rightInitalY = GET_Y_LPARAM(lParam);
+            if (instance->_viewMatrix)
+            {
+                float length = sqrtf(offsetX * offsetX + offsetY * offsetX);
+                instance->_viewMatrix->Rotate(length / 100, offsetX, offsetY, 0);
+            }
+        }
+        break;
+    }
+    case WM_RBUTTONDOWN:
+    {
+        rightMouseDown = true;
+        rightInitalX = GET_X_LPARAM(lParam);
+        rightInitalY = GET_Y_LPARAM(lParam);
+        break;
+    }
+    case WM_RBUTTONUP:
+    {
+        rightMouseDown = false;
+        break;
+    }
+    case WM_KEYDOWN:
+    {
+        if (!instance->_viewMatrix)
             break;
-        int offsetX = initalX - GET_X_LPARAM(lParam);
-        int offsetY = initalY - GET_Y_LPARAM(lParam);
-        initalX = GET_X_LPARAM(lParam);
-        initalY = GET_Y_LPARAM(lParam);
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glRotatef(2, (float)-offsetY, (float)-offsetX, 0);
-        glPushMatrix();
+        if (wParam == VK_UP)
+            instance->_viewMatrix->Translate(0, 0, 0.1);
+        if (wParam == VK_DOWN)
+            instance->_viewMatrix->Translate(0, 0, -0.1);
         break;
     }
     case WM_MOUSEWHEEL:
     {
         float zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glTranslatef(0, 0, zDelta / 500.0f);
-        glPushMatrix();
+        if (instance->_viewMatrix)
+        {
+            float zoom = zDelta / 120 / 100 + 1;
+            instance->_viewMatrix->Scale(zoom, zoom, zoom);
+        }
+        break;
+    }
+    case WM_NCCREATE:
+    {
+        LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
+        instance = static_cast<OpenGlWindow*>(lpcs->lpCreateParams);
+        //DONT BREAK
     }
     default: return DefWindowProc(hwnd, msg, wParam, lParam);
     }
