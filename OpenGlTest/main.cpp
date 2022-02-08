@@ -431,10 +431,10 @@ int main()
 
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        model.Reset();
+        model = Mat4::Identity() * Mat4::Translate(0, 0, 2) * Mat4::RotateX(angle);
         angle = angle + adder;
 
-        shaderProgram.SetMatrix("modelViewMatrix", Mat4::Identity() * Mat4::RotateX(angle) * Mat4::Translate(0, 0, 1.5) );
+        shaderProgram.SetMatrix("modelViewMatrix", model.Transpose());
         RenderTorus();
         //shaderProgram.SetMatrix("modelViewMatrix", model);
         RenderSphere(0.2);

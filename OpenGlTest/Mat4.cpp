@@ -24,6 +24,18 @@ Mat4 Mat4::Identity()
 }
 
 //--------------------------------------------------------------
+Mat4 Mat4::Transpose() const
+{
+    Mat4 result;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            result._data[i][j] = _data[j][i];
+
+    return result;
+}
+
+
+//--------------------------------------------------------------
 Mat4 Mat4::Projection(float aspect, float fov, float near, float far)
 {
     Mat4 proj;
@@ -40,8 +52,8 @@ Mat4 Mat4::RotateX(float angle)
 {
     Mat4 matX;
     matX._data[1][1] = (cosf(angle));
-    matX._data[2][1] = (-sinf(angle));                  
-    matX._data[1][2] = (sinf(angle));
+    matX._data[2][1] = (sinf(angle));                  
+    matX._data[1][2] = (-sinf(angle));
     matX._data[2][2] = (cosf(angle));
 
     //Mat4 mat;
@@ -95,8 +107,8 @@ Mat4 Mat4::RotateY(float angle)
 {
     Mat4 matY;
     matY._data[0][0] = (cosf(angle));
-    matY._data[2][0] = (-sinf(angle));
-    matY._data[0][2] = (sinf(angle));
+    matY._data[2][0] = (sinf(angle));
+    matY._data[0][2] = (-sinf(angle));
     matY._data[2][2] = (cosf(angle));
     return matY;
 }
@@ -106,8 +118,8 @@ Mat4 Mat4::RotateZ(float angle)
 {
     Mat4 matZ;
     matZ._data[0][0] = (cos(angle));
-    matZ._data[1][0] = (-sinf(angle));
-    matZ._data[0][1] = (sinf(angle));
+    matZ._data[1][0] = (sinf(angle));
+    matZ._data[0][1] = (-sinf(angle));
     matZ._data[1][1] = (cosf(angle));
     return matZ;
 }
@@ -116,9 +128,9 @@ Mat4 Mat4::RotateZ(float angle)
 Mat4 Mat4::Translate(float x, float y, float z)
 {
     Mat4 trans;
-    trans._data[3][0] = x;
-    trans._data[3][1] = y;
-    trans._data[3][2] = z;
+    trans._data[0][3] = x;
+    trans._data[1][3] = y;
+    trans._data[2][3] = z;
     return trans;
 }
 
@@ -141,7 +153,7 @@ Mat4 operator * (const Mat4 & a, const Mat4 & b)
         {
             float sum = 0;
             for (int k = 0; k < 4; k++)
-                sum += a.Data()[i * 4 + k] * b.Data()[k * 4 +j];
+                sum += a.Data()[i * 4 + k] * b.Data()[k * 4 + j];
             result.Data()[i * 4 + j] = sum;
         }
     return result;

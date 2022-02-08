@@ -6,6 +6,7 @@ public:
     float * Data() { return *_data; };
     const float * Data() const { return *_data; };
     Mat4 Reset();
+    Mat4 Transpose() const;
     static Mat4 Identity();
     static Mat4 Projection(float aspect, float fov, float near, float far);
     static Mat4 RotateX(float angle);
