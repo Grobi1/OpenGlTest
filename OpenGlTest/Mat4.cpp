@@ -18,6 +18,12 @@ Mat4 Mat4::Reset()
 }
 
 //--------------------------------------------------------------
+Mat4 Mat4::Identity()
+{
+    return Mat4();
+}
+
+//--------------------------------------------------------------
 Mat4 Mat4::Projection(float aspect, float fov, float near, float far)
 {
     Mat4 proj;
@@ -37,8 +43,6 @@ Mat4 Mat4::RotateX(float angle)
     matX._data[2][1] = (-sinf(angle));                  
     matX._data[1][2] = (sinf(angle));
     matX._data[2][2] = (cosf(angle));
-    Multiply(matX);
-
 
     //Mat4 mat;
     //mat._data[0][0] += (cosf(angle) * y) * (cos(angle) * z);
@@ -83,7 +87,7 @@ Mat4 Mat4::RotateX(float angle)
     //matRot._data[1][1] += t * y * z + s * x;
     //matRot._data[2][1] += t * z * z + c;
     //this->Multiply(matRot);
-    return *this;
+    return matX;
 }
 
 //--------------------------------------------------------------
@@ -94,8 +98,7 @@ Mat4 Mat4::RotateY(float angle)
     matY._data[2][0] = (-sinf(angle));
     matY._data[0][2] = (sinf(angle));
     matY._data[2][2] = (cosf(angle));
-    Multiply(matY);
-    return *this;
+    return matY;
 }
 
 //--------------------------------------------------------------
@@ -106,8 +109,7 @@ Mat4 Mat4::RotateZ(float angle)
     matZ._data[1][0] = (-sinf(angle));
     matZ._data[0][1] = (sinf(angle));
     matZ._data[1][1] = (cosf(angle));
-    Multiply(matZ);
-    return *this;
+    return matZ;
 }
 
 //--------------------------------------------------------------
@@ -117,22 +119,7 @@ Mat4 Mat4::Translate(float x, float y, float z)
     trans._data[3][0] = x;
     trans._data[3][1] = y;
     trans._data[3][2] = z;
-    Multiply(trans);
-    return *this;
-}
-
-//--------------------------------------------------------------
-Mat4 Mat4::Multiply(Mat4 mat)
-{
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-        {
-            float sum = 0;
-            for (int k = 0; k < 4; k++)
-                sum += _data[i][k] * mat._data[k][j];
-            _data[i][j] = sum;
-        }
-    return *this;
+    return trans;
 }
 
 //--------------------------------------------------------------
@@ -142,7 +129,21 @@ Mat4 Mat4::Scale(float x, float y, float z)
     scale._data[0][0] = x;
     scale._data[1][1] = y;
     scale._data[2][2] = z;
-    Multiply(scale);
-    return *this;
+    return scale;
+}
+
+//--------------------------------------------------------------
+Mat4 operator * (const Mat4 & a, const Mat4 & b)
+{
+    Mat4 result;
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+        {
+            float sum = 0;
+            for (int k = 0; k < 4; k++)
+                sum += a.Data()[i * 4 + k] * b.Data()[k * 4 +j];
+            result.Data()[i * 4 + j] = sum;
+        }
+    return result;
 }
 

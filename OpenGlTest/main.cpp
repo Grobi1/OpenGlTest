@@ -433,11 +433,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         model.Reset();
         angle = angle + adder;
-        model.RotateX(angle); // nothing should change when rotation the z axis
 
-
-        model.Translate(0, 0, 1);
-        shaderProgram.SetMatrix("modelViewMatrix", model);
+        shaderProgram.SetMatrix("modelViewMatrix", Mat4::Identity() * Mat4::RotateX(angle) * Mat4::Translate(0, 0, 1.5) );
         RenderTorus();
         //shaderProgram.SetMatrix("modelViewMatrix", model);
         RenderSphere(0.2);
