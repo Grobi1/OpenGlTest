@@ -30,19 +30,30 @@ Mat4 Mat4::Projection(float aspect, float fov, float near, float far)
 //--------------------------------------------------------------
 Mat4 Mat4::Rotate(float angle, float x, float y, float z)
 {
-    _data[0][0] +=                          (cosf(angle) * y)   *   (cos(angle) * z);
-    _data[1][0] +=                                                  (-sinf(angle) * z);
-    _data[2][0] +=                          (sinf(angle) * y);
+    Mat4 matX;
+    Mat4 matY;
+    Mat4 matZ;
 
-    _data[0][1] +=                                                  (sinf(angle) * z);
-    _data[1][1] += (cosf(angle) * x)    *                           (cosf(angle) * z);
-    _data[2][1] += (-sinf(angle) * x);
-
-    _data[0][2] +=                          (sinf(angle) * y);
-    _data[1][2] += (sinf(angle) * x);
-    _data[2][2] += (cosf(angle) * x)    *   (cosf(angle) * y);
+    matX._data[1][1] = (cosf(angle) * x);
+    matX._data[2][1] = (-sinf(angle) * x);                  
+    matX._data[1][2] = (sinf(angle) * x);
+    matX._data[2][2] = (cosf(angle) * x);
 
 
+    matY._data[0][0] = (cosf(angle) * y);
+    matY._data[2][0] = (sinf(angle) * y); 
+    matY._data[0][2] = (sinf(angle) * y);
+    matY._data[2][2] = (cosf(angle) * y);
+
+    matZ._data[0][0] = (cos(angle) * z);
+    matZ._data[1][0] = (-sinf(angle) * z);
+    matZ._data[0][1] = (sinf(angle) * z);
+    matZ._data[1][1] = (cosf(angle) * z);
+
+
+    Multiply(matX);
+    Multiply(matY);
+    Multiply(matZ);
 
     
 
@@ -72,24 +83,25 @@ Mat4 Mat4::Rotate(float angle, float x, float y, float z)
     //tXY+sZ          tY2 + c         tYZ - sX        0               
     //tXZ - sY        tYZ + sX        tZ2 + c         0
     // 
+    //Mat4 matRot;
     //float t = 1 - cosf(angle);
     //float s = 1 - sinf(angle);
     //float c = cosf(angle);
     ////tX2 + c         tXY - sZ        tXZ + sY        0 
-    //_data[0][0] += t * x * x + c;
-    //_data[1][0] += t * x * y - s * z;
-    //_data[2][0] += t * x * z + s * y;
+    //matRot._data[0][0] += t * x * x + c;
+    //matRot._data[1][0] += t * x * y - s * z;
+    //matRot._data[2][0] += t * x * z + s * y;
 
     ////tXY+sZ          tY2 + c         tYZ - sX        0 
-    //_data[0][1] += t * x * y + s * z;
-    //_data[1][1] += t * y * y + c;
-    //_data[2][1] += t * y * z - s * x;
+    //matRot._data[0][1] += t * x * y + s * z;
+    //matRot._data[1][1] += t * y * y + c;
+    //matRot._data[2][1] += t * y * z - s * x;
 
     ////tXZ - sY        tYZ + sX        tZ2 + c         0
-    //_data[0][1] += t * x * z - s * y;
-    //_data[1][1] += t * y * z + s * x;
-    //_data[2][1] += t * z * z + c;
-
+    //matRot._data[0][1] += t * x * z - s * y;
+    //matRot._data[1][1] += t * y * z + s * x;
+    //matRot._data[2][1] += t * z * z + c;
+    //this->Multiply(matRot);
     return *this;
 }
 

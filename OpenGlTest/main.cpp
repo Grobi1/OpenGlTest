@@ -412,13 +412,16 @@ int main()
     shaderProgram.Load("Shaders/shader.vert", "Shaders/shader.frag");
 
     Mat4 projection; // Is the Camera lense
-    projection.Projection(1, 2, 0.01, 100);
+    projection.Projection(1, 2, 0.5f, 10);
     Mat4 view; // Is the Camera position
     Mat4 model;
     window._viewMatrix = &view;
     Initialize();
     float angle = 1;
     float adder = 0.05;
+
+    //model.Rotate((3.142 * 2) / 4, 0, 0, 1);
+
     while (true)
     {
         shaderProgram.Use();
@@ -428,16 +431,16 @@ int main()
 
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        angle = angle + adder;
         model.Reset();
+        //angle = angle + adder;
+        //model.Rotate(angle, 0, 0, 1); // nothing should change when rotation the z axis
+
+        //if (angle > 1)
+        //    adder = -0.05;
+        //if (angle < -1)
+        //    adder = 0.05;
+
         model.Translate(0, 0, 1);
-        model.Rotate(angle, 1, 0, 0);
-
-        if (angle > 20)
-            adder = -0.05;
-        if (angle < -20)
-            adder = 0.05;
-
         shaderProgram.SetMatrix("modelViewMatrix", model);
         RenderTorus();
         //shaderProgram.SetMatrix("modelViewMatrix", model);
