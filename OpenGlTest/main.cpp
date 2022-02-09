@@ -204,9 +204,10 @@ int main()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderProgram.Use();
-        model = Mat4::Translate(0, 0, -3) * Mat4::Rotate(angle, 0, 1, 0);
+        model = Mat4::Translate(0, 0, -3) * Mat4::Rotate(angle, 1, 0, 0);
         shaderProgram.SetMatrix("projectionMatrix", projection.Transpose());
         shaderProgram.SetMatrix("viewMatrix", view.Transpose());
+        shaderProgram.SetMatrix("normalMatrix", Mat4::Rotate(angle, 1, 0, 0).Transpose());
 
         angle += 0.01;
 

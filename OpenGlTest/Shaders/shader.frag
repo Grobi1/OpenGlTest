@@ -6,8 +6,8 @@ out vec4 color;
 void main()
 {
    vec3 lightPos;
-   lightPos.xyz = vec3(0.0, 0.0, 9);
+   lightPos.xyz = vec3(0.0, 0.0, 7);
    vec3 lightDirection = normalize(lightPos - fragmentCurrentPosition);
-   float brightness = max(dot(fragmentNormal, lightDirection), 0.0);
+   float brightness = max(dot(fragmentNormal, lightDirection), 0.05);
    color = fragmentColor * brightness;
 }
