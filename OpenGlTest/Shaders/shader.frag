@@ -6,9 +6,8 @@ out vec4 color;
 void main()
 {
    vec3 lightPos;
-   lightPos.xyz = vec3(1.0, 1.0, -0.0);
+   lightPos.xyz = vec3(0.0, 0.0, 9);
    vec3 lightDirection = normalize(lightPos - fragmentCurrentPosition);
-   float diffuse = max(dot(fragmentNormal, lightDirection), 0.0f);
-   diffuse = max(diffuse, 0.1); //Simulate ambient light
-   color = fragmentColor * diffuse;
+   float brightness = max(dot(fragmentNormal, lightDirection), 0.0);
+   color = fragmentColor * brightness;
 }

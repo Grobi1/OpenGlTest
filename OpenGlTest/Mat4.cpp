@@ -36,13 +36,13 @@ Mat4 Mat4::Transpose() const
 
 
 //--------------------------------------------------------------
-Mat4 Mat4::Projection(float aspect, float fov, float near, float far)
+Mat4 Mat4::Perspective(float aspect, float fov, float near, float far)
 {
     Mat4 proj;
     proj._data[0][0] = 1 / (aspect * tan(fov / 2));
     proj._data[1][1] = 1 / (tan(fov / 2));
-    proj._data[2][2] = (far + near) / (far - near);
-    proj._data[2][3] = (2 * far * near) / (far - near);
+    proj._data[2][2] = ((far + near) / (near - far));
+    proj._data[2][3] = ((2 * far * near) / (near - far));
     proj._data[3][2] = -1;
     return proj;
 }

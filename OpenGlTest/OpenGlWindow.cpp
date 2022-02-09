@@ -15,11 +15,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     static int leftInitalX = 0;
     static int leftInitalY = 0;
     static bool leftMouseDown = false;
-    static int rightInitalX = 0;
-    static int rightInitalY = 0;
-    static bool rightMouseDown = false;
     static int width;
     static int height;
+
+    static float currentPositionX;
+    static float currentPositionY;
+    static float currentPositionZ;
+    static float currentRotationX;
+    static float currentRotationY;
+    static float currentRotationZ;
     switch (msg)
     {
     case WM_CLOSE: DestroyWindow(hwnd); break;
@@ -53,32 +57,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             leftInitalX = GET_X_LPARAM(lParam);
             leftInitalY = GET_Y_LPARAM(lParam);
             if (instance->_viewMatrix)
-                instance->_viewMatrix->Translate(-offsetX / ((float)width / 2), offsetY / ((float)height / 2), 0);
-        }
-        if (rightMouseDown)
-        {
-            int offsetX = rightInitalX - GET_X_LPARAM(lParam);
-            int offsetY = rightInitalY - GET_Y_LPARAM(lParam);
-            rightInitalX = GET_X_LPARAM(lParam);
-            rightInitalY = GET_Y_LPARAM(lParam);
-            if (instance->_viewMatrix)
             {
-                float length = sqrtf(offsetX * offsetX + offsetY * offsetX);
-                //instance->_viewMatrix->Rotate();
+                currentRotationX += offsetY / (float)width;
+                currentRotationY += -offsetX / (float)height;
             }
         }
-        break;
-    }
-    case WM_RBUTTONDOWN:
-    {
-        rightMouseDown = true;
-        rightInitalX = GET_X_LPARAM(lParam);
-        rightInitalY = GET_Y_LPARAM(lParam);
-        break;
-    }
-    case WM_RBUTTONUP:
-    {
-        rightMouseDown = false;
         break;
     }
     case WM_KEYDOWN:
@@ -86,30 +69,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if (!instance->_viewMatrix)
             break;
         if (wParam == VK_UP)
-            instance->_viewMatrix->Translate(0, 0, 0.1);
+            currentPositionZ += 0.1;
         if (wParam == VK_DOWN)
-            instance->_viewMatrix->Translate(0, 0, -0.1);
-        break;
-    }
-    case WM_MOUSEWHEEL:
-    {
-        float zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-        if (instance->_viewMatrix)
-        {
-            float zoom = zDelta / 120 / 100 + 1;
-            instance->_viewMatrix->Scale(zoom, zoom, zoom);
-        }
+            currentPositionZ -= 0.1;
+        if (wParam == VK_RIGHT)
+            currentPositionX -= 0.1;
+        if (wParam == VK_LEFT)
+            currentPositionX += 0.1;
         break;
     }
     case WM_NCCREATE:
     {
         LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
         instance = static_cast<OpenGlWindow*>(lpcs->lpCreateParams);
-        //DONT BREAK
+        break;
     }
-    default: return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-    return 0;
+    if (instance && instance->_viewMatrix)
+    {
+        *instance->_viewMatrix = Mat4::Translate(currentPositionX, currentPositionY, currentPositionZ) * Mat4::RotateX(currentRotationX) * Mat4::RotateY(currentRotationY) * Mat4::RotateZ(currentRotationZ);
+    }
+    return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 //--------------------------------------------------------------

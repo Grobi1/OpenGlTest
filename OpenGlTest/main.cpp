@@ -8,7 +8,16 @@
 #include "gl/glext.h"
 #include "ShaderProgram.h"
 #include "Mat4.h"
+#include "Cube.h"
+#include "Sphere.h"
 #include "Torus.h"
+#include "Vertex.h"
+
+//Current Problems:
+// 1. Light always comes from the front of the model matrix?
+// 2. Torus and Sphere have a triangle starting from 0,0,0 why?
+
+
 
 // Buffers
 PFNGLBINDBUFFERPROC    glBindBuffer;
@@ -65,27 +74,17 @@ void GenerateTexture()
 }
 
 //--------------------------------------------------------------
-Vector3D NormalVector(float * a, float * b, float * c)
-{
-    Vector3D x = Vector3D(a) - Vector3D(b);
-    Vector3D y = Vector3D(a) - Vector3D(c);
-    Vector3D normalVector = Vector3D::CrossProduct(x, y);
-    normalVector.Normalize();
-    return normalVector;
-}
-
-//--------------------------------------------------------------
 void Initialize()
 {
     //Initialize GL matrices with identity matrix
-    glMatrixMode(GL_PROJECTION); // Scale of the underlying coordinate system
-    glLoadIdentity();
-    glFrustum(-1, 1, -1, 1, 4, 10);
-    GLenum error = glGetError();
+    //glMatrixMode(GL_PROJECTION); // Scale of the underlying coordinate system
+    //glLoadIdentity();
+    //glFrustum(-1, 1, -1, 1, 4, 10);
+    //GLenum error = glGetError();
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
+    //glMatrixMode(GL_MODELVIEW);
+    //glLoadIdentity();
+    //glPushMatrix();
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
@@ -127,11 +126,11 @@ void Initialize()
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(7 * sizeof(float)));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
     glEnableVertexAttribArray(2);
 
     ////Texture   
@@ -156,246 +155,32 @@ void Initialize()
 }
 
 //--------------------------------------------------------------
-void RenderCube(float size = 0.15)
+void RenderCube(float size = 0.35)
 {  
-    std::vector<float> vertices;
-    float r = 0.5;
-    float g = 0.1;
-    float b = 0.5;
-    float a = 1;
-    //Back 
-    {
-        //Clockwise
-        vertices.insert(vertices.end(), { -size, -size, size, r, g , b, a }); //Upper left
-        vertices.insert(vertices.end(), { -size, size, size, r, g , b, a }); //Lower Left
-        vertices.insert(vertices.end(), { size, size, size, r, g , b, a }); //Lower Right
-
-        vertices.insert(vertices.end(), { -size, -size, size, r, g , b, a }); //Upper left
-        vertices.insert(vertices.end(), { size, -size, size, r, g , b, a }); //Upper Right
-        vertices.insert(vertices.end(), { size, size, size, r, g , b, a }); //Lower Right
-        //glColor3b(100, 100, 0);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-    //Front
-    {
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, -size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, size, -size, r, g , b, a });
-        //glColor3b(100, 0, 0);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-    //Bottom
-    {
-        vertices.insert(vertices.end(), { size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-
-        vertices.insert(vertices.end(), { size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, -size, -size, r, g , b, a });
-        //glColor3b(0, 0, 100);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-    //Top
-    {
-        vertices.insert(vertices.end(), { -size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-
-        vertices.insert(vertices.end(), { -size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, size, -size, r, g , b, a });
-        //glColor3b(0, 100, 0);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-    //Left
-    {
-        vertices.insert(vertices.end(), { -size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-
-        vertices.insert(vertices.end(), { -size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, -size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { -size, size, -size, r, g , b, a });
-        //glColor3b(100, 100, 100);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-    //Right
-    {
-        vertices.insert(vertices.end(), { size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-
-        vertices.insert(vertices.end(), { size, -size, size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, size, -size, r, g , b, a });
-        vertices.insert(vertices.end(), { size, -size, -size, r, g , b, a });
-        //glColor3b(0, 100, 100);
-        //glNormal3fv(NormalVector(a, b, c).Data());
-        //glTexCoord2f(0, 0); glVertex3fv(a);
-        //glTexCoord2f(0, 1); glVertex3fv(b);
-        //glTexCoord2f(1, 1); glVertex3fv(c);
-        //glTexCoord2f(1, 0); glVertex3fv(d);
-    }
-
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    Cube cube(size);
+    std::vector<Vertex> vertices = cube.GenerateMesh();
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
 
 //--------------------------------------------------------------
 void RenderTorus(double r = 0.12, double c = 0.45, int rSeg = 50, int cSeg = 150)
 {
+    Torus torus(r, c, rSeg, cSeg);
+    std::vector<Vertex> vertices = torus.GenerateMesh(); //is a little different because the triangle stripe is not per rotation
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size()); //10 is the size of a vertex with normal, color,...
 
-    //const double TAU = 2 * M_PI;
+}
 
-    //for (int i = 0; i < rSeg; i++)
-    //{
-    //    std::vector<float> vertices;
-    //    //glBegin(GL_QUAD_STRIP);
-    //    for (int j = 0; j <= cSeg; j++)
-    //    {
-    //        for (int k = 0; k <= 1; k++)
-    //        {
-    //            double rho = TAU / rSeg * (i + k);
-    //            double phi = TAU / cSeg * j;
-    //            double x = cos(phi) * (c + cos(rho) * r);
-    //            double y = sin(phi) * (c + cos(rho) * r);
-    //            double z = sin(rho) * r;
-    //            double u = cos(rho) * cos(phi);
-    //            double v = cos(rho) * sin(phi);
-    //            double w = sin(rho);
-    //            vertices.push_back(2 * x);
-    //            vertices.push_back(2 * y);
-    //            vertices.push_back(2 * z);
-
-    //            vertices.push_back(0.1);
-    //            vertices.push_back(0.5);
-    //            vertices.push_back(0.1);
-    //            vertices.push_back(1);
-
-    //            vertices.push_back(u);
-    //            vertices.push_back(v);
-    //            vertices.push_back(w);
-    //            //glTexCoord2d(u * 0.5 + 0.5, v * 0.5 + 0.5);
-    //        }
-    //    }
-    //    //glEnd();
-    //    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    //    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
-    //}
-
-    Torus torus;
-    std::vector<float> vertices = torus.GenerateMesh(); //is a little different because the triangle stripe is not per rotation
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+//--------------------------------------------------------------
+void RenderSphere(float r = 0.075, int latSeg = 150, int longSeg = 100)
+{
+    Sphere sphere(r, latSeg, longSeg);
+    std::vector<Vertex> vertices = sphere.GenerateMesh();
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
-
 }
-
-//--------------------------------------------------------------
-void RenderSphere(double r = 0.075, int latSeg = 150, int longSeg = 100)
-{
-    const double TAU = 2 * M_PI;
-
-    for (int i = 0; i < latSeg; i++)
-    {
-        std::vector<float> vertices;
-        for (int j = 0; j <= longSeg; j++)
-        {
-            for (int k = 0; k <= 1; k++)
-            {
-                double rho = TAU / latSeg * (i + k);
-                double phi = TAU / longSeg * j;
-                double x = cos(phi) * sin(rho) * r;
-                double y = sin(phi) * sin(rho) * r;
-                double z = cos(rho) * r;
-                double u = cos(phi) * sin(rho);
-                double v = sin(phi) * sin(rho);
-                double w = cos(rho);
-                vertices.push_back(2 * x);
-                vertices.push_back(2 * y);
-                vertices.push_back(2 * z);
-
-                vertices.push_back(0.1);
-                vertices.push_back(0.5);
-                vertices.push_back(0.1);
-                vertices.push_back(1);
-
-                vertices.push_back(u);
-                vertices.push_back(v);
-                vertices.push_back(w);
-                //glTexCoord2d(u * 0.5 + 0.5, v * 0.5 + 0.5);
-            }
-        }
-        //glEnd();
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
-    }
-}
-
-//--------------------------------------------------------------
-void Render()
-{
-    //glMatrixMode(GL_MODELVIEW);
-    //glPopMatrix();
-
-    //Save default matrix again
-    //glPushMatrix(); //<- why
-
-    //glTranslatef(_windowWidth / 2.f, _windowHeight / 2.f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //glTranslatef(-0.2f, 0, 0);
-    RenderSphere();
-    //glTranslatef(+0.2f, 0, 0);
-    RenderTorus();
-    //glTranslatef(+0.2f, 0, 0);
-    RenderCube();
-    //glTranslatef(-0.2f, 0, 0);
-}
-
-//--------------------------------------------------------------
-void MoveCamera(float x, float y, float z)
-{
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    //glLoadIdentity();
-    glTranslatef(x, y, z);
-    glPushMatrix();
-}
-
-//--------------------------------------------------------------
-void RotateCamera(float angle, float x, float y, float z)
-{
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    //glLoadIdentity(); // this resets our matrix
-    glRotatef(angle, x, y, z);
-    glPushMatrix();
-}
-
 
 //--------------------------------------------------------------
 //int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
@@ -411,30 +196,27 @@ int main()
     //window._shaderProgram = &shaderProgram;
     shaderProgram.Load("Shaders/shader.vert", "Shaders/shader.frag");
 
-    Mat4 projection = Mat4::Projection(1, 1, 0.5f, 2); // Is the Camera lense
+    Mat4 projection = Mat4::Perspective(1, 1, 0.5, 10); // Is the Camera lense
     //projection.Projection(1, 2, 0.5f, 10);
     Mat4 view; // Is the Camera position
     Mat4 model;
     window._viewMatrix = &view;
     Initialize();
-    float angle = 1;
-    float adder = 0.01;
+    float angle = 0;
 
     //model.Rotate((3.142 * 2) / 4, 0, 0, 1);
 
     while (true)
     {
-        shaderProgram.Use();
-        shaderProgram.SetMatrix("projectionMatrix", projection); // TODO: this should be a frustrum matrix
-        shaderProgram.SetMatrix("viewMatrix", view);
-        shaderProgram.SetMatrix("modelViewMatrix", model);
-
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        model = Mat4::Identity() * Mat4::Translate(0, 0, 2) * Mat4::RotateX(angle);
-        angle = angle + adder;
+        shaderProgram.Use();
+        model = Mat4::Translate(0, 0, -3) * Mat4::RotateX(angle);
+        shaderProgram.SetMatrix("projectionMatrix", projection.Transpose());
+        shaderProgram.SetMatrix("viewMatrix", view.Transpose());
 
-        shaderProgram.SetMatrix("modelViewMatrix", model.Transpose());
+        angle += 0.01;
+
+        shaderProgram.SetMatrix("modelMatrix", model.Transpose());
         RenderTorus();
         //shaderProgram.SetMatrix("modelViewMatrix", model);
         RenderSphere(0.2);

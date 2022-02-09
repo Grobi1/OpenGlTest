@@ -10,9 +10,9 @@ Torus::Torus(float r, float c, int rSeg, int cSeg)
 }
 
 //--------------------------------------------------------------
-std::vector<float> Torus::GenerateMesh()
+std::vector<Vertex> Torus::GenerateMesh()
 {
-    std::vector<float> vertices;
+    std::vector<Vertex> vertices;
     const double TAU = 2 * M_PI;
 
     for (int i = 0; i < _rSeg; i++)
@@ -31,18 +31,22 @@ std::vector<float> Torus::GenerateMesh()
                 double v = cos(rho) * sin(phi);
                 double w = sin(rho);
 
-                vertices.push_back(2 * x);
-                vertices.push_back(2 * y);
-                vertices.push_back(2 * z);
+                Vertex vertex;
+                vertex.position[0] = 2 * x;
+                vertex.position[1] = 2 * y;
+                vertex.position[2] = 2 * z;
 
-                vertices.push_back(0.1);
-                vertices.push_back(0.5);
-                vertices.push_back(0.1);
-                vertices.push_back(1);
+                vertex.normal[0] = u;
+                vertex.normal[1] = v;
+                vertex.normal[2] = w;
 
-                vertices.push_back(u);
-                vertices.push_back(v);
-                vertices.push_back(w);
+                vertex.color[0] = 1;
+                vertex.color[1] = 1;
+                vertex.color[2] = 1;
+                vertex.color[3] = 1;
+
+
+                vertices.push_back(vertex);
                 //glTexCoord2d(u * 0.5 + 0.5, v * 0.5 + 0.5);
             }
         }

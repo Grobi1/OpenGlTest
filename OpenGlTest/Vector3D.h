@@ -12,7 +12,7 @@ public:
     float Y() const;
     float Z() const;
     static Vector3D CrossProduct(const Vector3D & a, const Vector3D & b);
-
+    static Vector3D Normal(const Vector3D& a, const Vector3D& b, const Vector3D& c);
     Vector3D operator - (const Vector3D & rhs) const;
     //Vector3D operator * (const Vector3D & rhs) const;
     Vector3D operator * (const float rhs) const;

@@ -60,6 +60,16 @@ Vector3D Vector3D::CrossProduct(const Vector3D & a, const Vector3D & b)
 }
 
 //--------------------------------------------------------------
+Vector3D Vector3D::Normal(const Vector3D& a, const Vector3D& b, const Vector3D& c)
+{
+    Vector3D x = a - b;
+    Vector3D y = a - c;
+    Vector3D normalVector = Vector3D::CrossProduct(x, y);
+    normalVector.Normalize();
+    return normalVector;
+}
+
+//--------------------------------------------------------------
 Vector3D Vector3D::operator - (const Vector3D & rhs) const
 {
     return Vector3D(X() - rhs.X(), Y() - rhs.Y(), Z() - rhs.Z());
