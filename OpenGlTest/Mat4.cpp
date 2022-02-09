@@ -46,6 +46,34 @@ Mat4 Mat4::Perspective(float aspect, float fov, float near, float far)
     proj._data[3][2] = -1;
     return proj;
 }
+//--------------------------------------------------------------
+Mat4 Mat4::Rotate(float angle, float x, float y, float z)
+{
+    //https://www.cprogramming.com/tutorial/3d/rotation.html and https://learnopengl.com/Getting-started/Transformations
+    //tX2 + c         tXY - sZ        tXZ + sY        0              
+    //tXY+sZ          tY2 + c         tYZ - sX        0               
+    //tXZ - sY        tYZ + sX        tZ2 + c         0
+
+    Mat4 matRot;
+    float t = 1 - cosf(angle);
+    float s = sinf(angle);
+    float c = cosf(angle);
+    //tX2 + c         tXY - sZ        tXZ + sY        0 
+    matRot._data[0][0] = t * x * x + c;
+    matRot._data[1][0] = t * x * y - s * z;
+    matRot._data[2][0] = t * x * z + s * y;
+
+    //tXY+sZ          tY2 + c         tYZ - sX        0 
+    matRot._data[0][1] = t * x * y + s * z;
+    matRot._data[1][1] = t * y * y + c;
+    matRot._data[2][1] = t * y * z - s * x;
+
+    //tXZ - sY        tYZ + sX        tZ2 + c         0
+    matRot._data[0][2] = t * x * z - s * y;
+    matRot._data[1][2] = t * y * z + s * x;
+    matRot._data[2][2] = t * z * z + c;
+    return matRot;
+}
 
 //--------------------------------------------------------------
 Mat4 Mat4::RotateX(float angle)
@@ -55,50 +83,6 @@ Mat4 Mat4::RotateX(float angle)
     matX._data[2][1] = (sinf(angle));                  
     matX._data[1][2] = (-sinf(angle));
     matX._data[2][2] = (cosf(angle));
-
-    //Mat4 mat;
-    //mat._data[0][0] += (cosf(angle) * y) * (cos(angle) * z);
-    //mat._data[1][0] += (-sinf(angle) * z);
-    //mat._data[2][0] += (sinf(angle) * y);
-
-    //mat._data[0][1] += (sinf(angle) * z);
-    //mat._data[1][1] += (cosf(angle) * x) * (cosf(angle) * z);
-    //mat._data[2][1] += (-sinf(angle) * x);
-
-    //mat._data[0][2] += (sinf(angle) * y);
-    //mat._data[1][2] += (sinf(angle) * x);
-    //mat._data[2][2] += (cosf(angle) * x) * (cosf(angle) * y);
-
-    //this->Multiply(mat);
-
-
-
-
-
-    //https://www.cprogramming.com/tutorial/3d/rotation.html and https://learnopengl.com/Getting-started/Transformations
-    //tX2 + c         tXY - sZ        tXZ + sY        0              
-    //tXY+sZ          tY2 + c         tYZ - sX        0               
-    //tXZ - sY        tYZ + sX        tZ2 + c         0
-    // 
-    //Mat4 matRot;
-    //float t = 1 - cosf(angle);
-    //float s = 1 - sinf(angle);
-    //float c = cosf(angle);
-    ////tX2 + c         tXY - sZ        tXZ + sY        0 
-    //matRot._data[0][0] += t * x * x + c;
-    //matRot._data[1][0] += t * x * y - s * z;
-    //matRot._data[2][0] += t * x * z + s * y;
-
-    ////tXY+sZ          tY2 + c         tYZ - sX        0 
-    //matRot._data[0][1] += t * x * y + s * z;
-    //matRot._data[1][1] += t * y * y + c;
-    //matRot._data[2][1] += t * y * z - s * x;
-
-    ////tXZ - sY        tYZ + sX        tZ2 + c         0
-    //matRot._data[0][1] += t * x * z - s * y;
-    //matRot._data[1][1] += t * y * z + s * x;
-    //matRot._data[2][1] += t * z * z + c;
-    //this->Multiply(matRot);
     return matX;
 }
 

@@ -9,6 +9,7 @@ public:
     Mat4 Transpose() const;
     static Mat4 Identity();
     static Mat4 Perspective(float aspect, float fov, float near, float far);
+    static Mat4 Rotate(float angle, float x, float y, float z);
     static Mat4 RotateX(float angle);
     static Mat4 RotateY(float angle);
     static Mat4 RotateZ(float angle);

@@ -13,12 +13,6 @@
 #include "Torus.h"
 #include "Vertex.h"
 
-//Current Problems:
-// 1. Light always comes from the front of the model matrix?
-// 2. Torus and Sphere have a triangle starting from 0,0,0 why?
-
-
-
 // Buffers
 PFNGLBINDBUFFERPROC    glBindBuffer;
 PFNGLDELETEBUFFERSPROC glDeleteBuffers;
@@ -210,7 +204,7 @@ int main()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderProgram.Use();
-        model = Mat4::Translate(0, 0, -3) * Mat4::RotateX(angle);
+        model = Mat4::Translate(0, 0, -3) * Mat4::Rotate(angle, 0, 1, 0);
         shaderProgram.SetMatrix("projectionMatrix", projection.Transpose());
         shaderProgram.SetMatrix("viewMatrix", view.Transpose());
 
