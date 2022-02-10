@@ -11,9 +11,9 @@ Cube::Cube(float size)
 std::vector<Vertex> Cube::GenerateMesh()
 {
     std::vector<Vertex> vertices;
-    float r = 0.5;
-    float g = 0.1;
-    float b = 0.5;
+    float r = 0.5f;
+    float g = 0.1f;
+    float b = 0.5f;
     float a = 1;
 
     float corners[8][3] =
@@ -47,14 +47,14 @@ std::vector<Vertex> Cube::GenerateMesh()
 
     float textureCoords[8][2] =
     {
-        { 0, 0, },
-        { 1, 0, },
-        { 1, 1, },
-        { 0, 1, },
-        { 0, 0, },
-        { 1, 0, },
-        { 1, 1, },
-        { 0, 1, }
+        { 0.f, 0.f, },
+        { 1.f, 0.f, },
+        { 1.f, 1.f, },
+        { 0.f, 1.f, },
+        { 0.f, 0.f, },
+        { 1.f, 0.f, },
+        { 1.f, 1.f, },
+        { 0.f, 1.f, }
     };
 
     for (int triangleIndex = 0; triangleIndex < 12; triangleIndex++)

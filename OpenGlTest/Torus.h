@@ -9,7 +9,7 @@ public:
 private:
     float _r;
     float _c;
-    float _rSeg;
-    float _cSeg;
+    int _rSeg;
+    int _cSeg;
 };
 

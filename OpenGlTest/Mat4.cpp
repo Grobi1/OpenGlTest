@@ -39,8 +39,8 @@ Mat4 Mat4::Transpose() const
 Mat4 Mat4::Perspective(float aspect, float fov, float near, float far)
 {
     Mat4 proj;
-    proj._data[0][0] = 1 / (aspect * tan(fov / 2));
-    proj._data[1][1] = 1 / (tan(fov / 2));
+    proj._data[0][0] = 1 / (aspect * tanf(fov / 2));
+    proj._data[1][1] = 1 / (tanf(fov / 2));
     proj._data[2][2] = ((far + near) / (near - far));
     proj._data[2][3] = ((2 * far * near) / (near - far));
     proj._data[3][2] = -1;
@@ -102,7 +102,7 @@ Mat4 Mat4::RotateY(float angle)
 Mat4 Mat4::RotateZ(float angle)
 {
     Mat4 matZ;
-    matZ._data[0][0] = (cos(angle));
+    matZ._data[0][0] = (cosf(angle));
     matZ._data[1][0] = (sinf(angle));
     matZ._data[0][1] = (-sinf(angle));
     matZ._data[1][1] = (cosf(angle));

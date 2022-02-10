@@ -8,7 +8,7 @@ public:
     virtual std::vector<Vertex> GenerateMesh();
 private:
     float _r;
-    float _latSeg;
-    float _longSeg;
+    int _latSeg;
+    int _longSeg;
 };
 

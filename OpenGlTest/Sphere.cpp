@@ -11,7 +11,7 @@ Sphere::Sphere(float r, int latSeg, int longSeg)
 //--------------------------------------------------------------
 std::vector<Vertex> Sphere::GenerateMesh()
 {
-    const double TAU = 2 * M_PI;
+    const float TAU = 2 * (float)M_PI;
     std::vector<Vertex> vertices;
 
     for (int i = 0; i < _latSeg; i++)
@@ -20,14 +20,14 @@ std::vector<Vertex> Sphere::GenerateMesh()
         {
             for (int k = 0; k <= 1; k++)
             {
-                double rho = TAU / _latSeg * (i + k);
-                double phi = TAU / _longSeg * j;
-                double x = cos(phi) * sin(rho) * _r;
-                double y = sin(phi) * sin(rho) * _r;
-                double z = cos(rho) * _r;
-                double u = cos(phi) * sin(rho);
-                double v = sin(phi) * sin(rho);
-                double w = cos(rho);
+                float rho = TAU / _latSeg * (i + k);
+                float phi = TAU / _longSeg * j;
+                float x   = cosf(phi) * sinf(rho) * _r;
+                float y   = sinf(phi) * sinf(rho) * _r;
+                float z   = cosf(rho) * _r;
+                float u   = cosf(phi) * sinf(rho);
+                float v   = sinf(phi) * sinf(rho);
+                float w   = cosf(rho);
                 Vertex vertex;
                 vertex.position[0] = 2 * x;
                 vertex.position[1] = 2 * y;
@@ -37,13 +37,13 @@ std::vector<Vertex> Sphere::GenerateMesh()
                 vertex.normal[1] = v;
                 vertex.normal[2] = w;
 
-                vertex.color[0] = 0.5;
-                vertex.color[1] = 0.1;
-                vertex.color[2] = 0.5;
+                vertex.color[0] = 0.5f;
+                vertex.color[1] = 0.1f;
+                vertex.color[2] = 0.5f;
                 vertex.color[3] = 1;
 
-                vertex.texture[0] = u * 0.5 + 0.5;
-                vertex.texture[1] = v * 0.5 + 0.5;
+                vertex.texture[0] = u * 0.5f + 0.5f;
+                vertex.texture[1] = v * 0.5f + 0.5f;
 
                 vertices.push_back(vertex);
             }

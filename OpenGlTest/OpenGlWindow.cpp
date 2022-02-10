@@ -69,13 +69,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         if (!instance->_viewMatrix)
             break;
         if (wParam == VK_UP)
-            currentPositionZ += 0.1;
+            currentPositionZ += 0.1f;
         if (wParam == VK_DOWN)
-            currentPositionZ -= 0.1;
+            currentPositionZ -= 0.1f;
         if (wParam == VK_RIGHT)
-            currentPositionX -= 0.1;
+            currentPositionX -= 0.1f;
         if (wParam == VK_LEFT)
-            currentPositionX += 0.1;
+            currentPositionX += 0.1f;
         if (wParam == VK_ESCAPE)
         {
             currentPositionX = 0.f;

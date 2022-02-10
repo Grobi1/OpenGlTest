@@ -31,6 +31,7 @@
     <ClCompile Include="Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Shapes.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Mat4.h" />

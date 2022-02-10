@@ -13,7 +13,7 @@ Torus::Torus(float r, float c, int rSeg, int cSeg)
 std::vector<Vertex> Torus::GenerateMesh()
 {
     std::vector<Vertex> vertices;
-    const double TAU = 2 * M_PI;
+    const float TAU = 2 * (float)M_PI;
 
     for (int i = 0; i < _rSeg; i++)
     {
@@ -22,14 +22,14 @@ std::vector<Vertex> Torus::GenerateMesh()
         {
             for (int k = 0; k <= 1; k++)
             {
-                double rho = TAU / _rSeg * (i + k);
-                double phi = TAU / _cSeg * j;
-                double x = cos(phi) * (_c + cos(rho) * _r);
-                double y = sin(phi) * (_c + cos(rho) * _r);
-                double z = sin(rho) * _r;
-                double u = cos(rho) * cos(phi);
-                double v = cos(rho) * sin(phi);
-                double w = sin(rho);
+                float rho = TAU / _rSeg * (i + k);
+                float phi = TAU / _cSeg * j;
+                float x = cosf(phi) * (_c + cosf(rho) * _r);
+                float y = sinf(phi) * (_c + cosf(rho) * _r);
+                float z = sinf(rho) * _r;
+                float u = cosf(rho) * cosf(phi);
+                float v = cosf(rho) * sinf(phi);
+                float w = sinf(rho);
 
                 Vertex vertex;
                 vertex.position[0] = 2 * x;
@@ -45,8 +45,8 @@ std::vector<Vertex> Torus::GenerateMesh()
                 vertex.color[2] = 1;
                 vertex.color[3] = 1;
 
-                vertex.texture[0] = u * 0.5 + 0.5;
-                vertex.texture[1] = v * 0.5 + 0.5;
+                vertex.texture[0] = u * 0.5f + 0.5f;
+                vertex.texture[1] = v * 0.5f + 0.5f;
 
                 vertices.push_back(vertex);
             }

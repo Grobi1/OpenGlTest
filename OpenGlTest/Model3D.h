@@ -9,5 +9,7 @@ public:
     virtual void Render();
     virtual std::vector<Vertex> GenerateMesh() { return std::vector<Vertex>(); }
 private:
+    int _vao;
+    int _vbo;
 };
 
