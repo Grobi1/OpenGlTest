@@ -59,7 +59,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             if (instance->_viewMatrix)
             {
                 currentRotationX += offsetY / (float)width;
-                currentRotationY += -offsetX / (float)height;
+                currentRotationY += offsetX / (float)height;
             }
         }
         break;
@@ -96,7 +96,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     if (instance && instance->_viewMatrix)
     {
-        *instance->_viewMatrix = Mat4::Translate(currentPositionX, currentPositionY, currentPositionZ) * Mat4::RotateX(currentRotationX) * Mat4::RotateY(currentRotationY) * Mat4::RotateZ(currentRotationZ);
+        *instance->_viewMatrix = Mat4::Rotate(currentRotationX, 1, 0, 0) * Mat4::Rotate(currentRotationY, 0, 1, 0) * Mat4::Rotate(currentRotationZ, 0, 0, 1) * Mat4::Translate(currentPositionX, currentPositionY, currentPositionZ);
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }

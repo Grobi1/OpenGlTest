@@ -13,6 +13,7 @@ out vec4 fragmentColor;
 out vec3 fragmentNormal;
 out vec3 fragmentCurrentPosition;
 out vec2 fragmentTexture;
+out vec3 fragmentCameraPosition;
 
 void main()
 {
@@ -21,4 +22,5 @@ void main()
    fragmentColor = color;
    fragmentNormal = normalize(vec3(normalMatrix * vec4(normal, 1.0)));
    fragmentTexture = fragmentNormal.xy * 0.5 + 0.5;
+   fragmentCameraPosition = viewMatrix[3].xyz;
 }

@@ -50,7 +50,7 @@ int main()
         shaderProgram.SetMatrix("projectionMatrix", projection.Transpose());
         shaderProgram.SetMatrix("viewMatrix", view.Transpose());
 
-        angle += 0.01f;
+        //angle += 0.01f;
         
         Mat4 rotation = Mat4::Rotate(angle, 1, 0, 0);
 

@@ -25,6 +25,7 @@ PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
 //--------------------------------------------------------------
 ShaderProgram::ShaderProgram()
 {
+    _id = 0;
     //Shaders
     glCreateShader = (PFNGLCREATESHADERPROC)wglGetProcAddress("glCreateShader");
     glShaderSource = (PFNGLSHADERSOURCEPROC)wglGetProcAddress("glShaderSource");

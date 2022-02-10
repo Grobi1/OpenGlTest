@@ -19,6 +19,8 @@ PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 //--------------------------------------------------------------
 Model3D::Model3D()
 {
+    _meshSize = 0;
+
     // Probably better to wrap these all in one file/class?
     glBufferData = (PFNGLBUFFERDATAPROC)wglGetProcAddress("glBufferData");
 
@@ -52,9 +54,14 @@ void Model3D::Render()
 {
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    std::vector<Vertex> vertices = GenerateMesh(); //We could also cache this mesh
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, static_cast<GLsizei>(vertices.size()));
+    if (_meshSize == 0)
+    {
+         std::vector<Vertex> vertices = GenerateMesh();
+        _meshSize = vertices.size();
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    }
+    
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, (GLsizei)_meshSize);
 
     //We are finished with this VAO and VBO so unbind so that something else does not write to it
     glBindBuffer(GL_ARRAY_BUFFER, 0);
