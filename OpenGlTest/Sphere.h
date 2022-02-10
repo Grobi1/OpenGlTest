@@ -1,5 +1,6 @@
 #pragma once
 #include "Model3D.h"
+
 class Sphere : public Model3D
 {
 public:

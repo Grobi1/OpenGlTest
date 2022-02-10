@@ -45,9 +45,10 @@ std::vector<Vertex> Torus::GenerateMesh()
                 vertex.color[2] = 1;
                 vertex.color[3] = 1;
 
+                vertex.texture[0] = u * 0.5 + 0.5;
+                vertex.texture[1] = v * 0.5 + 0.5;
 
                 vertices.push_back(vertex);
-                //glTexCoord2d(u * 0.5 + 0.5, v * 0.5 + 0.5);
             }
         }
     }

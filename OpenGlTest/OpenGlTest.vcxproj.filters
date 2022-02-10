@@ -30,7 +30,7 @@
     <ClCompile Include="Vector3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bitmap.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
@@ -59,7 +59,7 @@
     <ClInclude Include="Vector3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bitmap.h">
+    <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">

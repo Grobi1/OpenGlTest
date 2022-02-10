@@ -3,16 +3,21 @@
 #include <inttypes.h>
 
 #pragma once
-class Bitmap
+class Texture
 {
 public:
-    Bitmap(std::string path);
+    Texture(std::string path);
     uint8_t * Data() { return _data.data(); };
     int Width() { return _width; };
     int Height() { return _height; };
+
+    void Bind();
+    void Unbind();
 private:
-    std::vector<uint8_t> _data;
+    void Load(std::string path);
+    int _id;
     int _width;
     int _height;
+    std::vector<uint8_t> _data;
 };
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Model3D.h"
 
-class Cube : Model3D
+class Cube : public Model3D
 {
 public:
     Cube(float size = 0.2);

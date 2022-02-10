@@ -1,9 +1,38 @@
-#include "Bitmap.h"
-#include <fstream>
+#include "Texture.h"
 #include <Windows.h>
+#include <fstream>
+#include <gl/GL.h>
+#include <gl/glext.h>
+
+PFNGLACTIVETEXTUREPROC glActiveTexture;
 
 //--------------------------------------------------------------
-Bitmap::Bitmap(std::string path)
+Texture::Texture(std::string path)
+{
+    _height = 0;
+    _width = 0;
+
+    glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    _id = texture;
+
+    Bind();
+
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NONE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NONE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    Load(path);
+
+    Unbind();
+}
+
+//--------------------------------------------------------------
+void Texture::Load(std::string path)
 {
     std::wstring tmp = std::wstring(path.begin(), path.end());
     LPCWSTR lpcwstr = tmp.c_str();
@@ -39,4 +68,20 @@ Bitmap::Bitmap(std::string path)
     }
 
     DeleteDC(dc);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data.data());
 }
+
+//--------------------------------------------------------------
+void Texture::Bind()
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _id);
+}
+
+//--------------------------------------------------------------
+void Texture::Unbind()
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+

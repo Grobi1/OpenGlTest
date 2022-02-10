@@ -97,6 +97,7 @@ void ShaderProgram::Use()
         glUseProgram(_id);
 }
 
+//--------------------------------------------------------------
 void ShaderProgram::PrintShaderError(GLuint id)
 {
     GLint isCompiled = 0;

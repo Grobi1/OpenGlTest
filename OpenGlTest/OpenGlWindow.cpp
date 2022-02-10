@@ -76,6 +76,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             currentPositionX -= 0.1;
         if (wParam == VK_LEFT)
             currentPositionX += 0.1;
+        if (wParam == VK_ESCAPE)
+        {
+            currentPositionX = 0.f;
+            currentPositionY = 0.f;
+            currentPositionZ = 0.f;
+            currentRotationX = 0.f;
+            currentRotationY = 0.f;
+            currentRotationZ = 0.f;
+        }
         break;
     }
     case WM_NCCREATE:

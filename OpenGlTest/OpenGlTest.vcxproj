@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mat4.cpp" />
@@ -31,7 +31,7 @@
     <ClCompile Include="Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Mat4.h" />
     <ClInclude Include="Model3D.h" />

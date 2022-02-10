@@ -46,6 +46,7 @@ Mat4 Mat4::Perspective(float aspect, float fov, float near, float far)
     proj._data[3][2] = -1;
     return proj;
 }
+
 //--------------------------------------------------------------
 Mat4 Mat4::Rotate(float angle, float x, float y, float z)
 {
