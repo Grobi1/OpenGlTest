@@ -4,45 +4,18 @@
 #include "ShaderProgram.h"
 #include <vector>
 #include <iostream>
-
-//Shaders
-PFNGLCREATESHADERPROC glCreateShader;
-PFNGLSHADERSOURCEPROC glShaderSource;
-PFNGLCOMPILESHADERPROC glCompileShader;
-PFNGLDELETESHADERPROC glDeleteShader;
-// Program
-PFNGLCREATEPROGRAMPROC glCreateProgram;
-PFNGLATTACHSHADERPROC glAttachShader;
-PFNGLLINKPROGRAMPROC glLinkProgram;
-PFNGLUSEPROGRAMPROC glUseProgram;
-
-PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
-PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
-
-PFNGLGETSHADERIVPROC glGetShaderiv;
-PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+#include "OpenGl.h"
 
 //--------------------------------------------------------------
 ShaderProgram::ShaderProgram()
 {
     _id = 0;
-    //Shaders
-    glCreateShader = (PFNGLCREATESHADERPROC)wglGetProcAddress("glCreateShader");
-    glShaderSource = (PFNGLSHADERSOURCEPROC)wglGetProcAddress("glShaderSource");
-    glCompileShader = (PFNGLCOMPILESHADERPROC)wglGetProcAddress("glCompileShader");
+}
 
-    //Shader program
-    glCreateProgram = (PFNGLCREATEPROGRAMPROC)wglGetProcAddress("glCreateProgram");
-    glAttachShader = (PFNGLATTACHSHADERPROC)wglGetProcAddress("glAttachShader");
-    glLinkProgram = (PFNGLLINKPROGRAMPROC)wglGetProcAddress("glLinkProgram");
-    glUseProgram = (PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram");
-    glDeleteShader = (PFNGLDELETESHADERPROC)wglGetProcAddress("glDeleteShader");
-
-    glUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)wglGetProcAddress("glUniformMatrix4fv");
-    glGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)wglGetProcAddress("glGetUniformLocation");
-
-    glGetShaderiv = (PFNGLGETSHADERIVPROC)wglGetProcAddress("glGetShaderiv");
-    glGetShaderInfoLog = (PFNGLGETSHADERINFOLOGPROC)wglGetProcAddress("glGetShaderInfoLog");
+//--------------------------------------------------------------
+ShaderProgram::~ShaderProgram()
+{
+    glDeleteProgram(_id);
 }
 
 //--------------------------------------------------------------
@@ -110,7 +83,7 @@ void ShaderProgram::PrintShaderError(GLuint id)
         std::vector<GLchar> errorLog(maxLength);
         glGetShaderInfoLog(id, maxLength, &maxLength, &errorLog[0]);
 
-        glDeleteShader(id); // Don't leak the shader.
+        glDeleteShader(id);
 
         std::cout << "Error in Shader id=" << id << std::endl;
         for (GLchar i : errorLog)

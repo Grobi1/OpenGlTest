@@ -1,37 +1,13 @@
 #include <Windows.h>
 #include "Model3D.h"
-#include <gl/GL.h>
-#include "gl/glext.h"
+#include "OpenGl.h"
 
-PFNGLBUFFERDATAPROC    glBufferData;
 
-// Buffers
-PFNGLBINDBUFFERPROC    glBindBuffer;
-PFNGLDELETEBUFFERSPROC glDeleteBuffers;
-PFNGLGENBUFFERSPROC    glGenBuffers;
-PFNGLGENVERTEXARRAYSPROC glGenVertexArrays;
-PFNGLBINDVERTEXARRAYPROC glBindVertexArray;
-
-//Vertex attributes
-PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
-PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
 
 //--------------------------------------------------------------
 Model3D::Model3D()
 {
     _meshSize = 0;
-
-    // Probably better to wrap these all in one file/class?
-    glBufferData = (PFNGLBUFFERDATAPROC)wglGetProcAddress("glBufferData");
-
-    glBindBuffer = (PFNGLBINDBUFFERPROC)wglGetProcAddress("glBindBuffer");
-    glDeleteBuffers = (PFNGLDELETEBUFFERSPROC)wglGetProcAddress("glDeleteBuffers");
-    glGenBuffers = (PFNGLGENBUFFERSPROC)wglGetProcAddress("glGenBuffers");
-    glGenVertexArrays = (PFNGLGENVERTEXARRAYSPROC)wglGetProcAddress("glGenVertexArrays");
-    glBindVertexArray = (PFNGLBINDVERTEXARRAYPROC)wglGetProcAddress("glBindVertexArray");
-
-    glVertexAttribPointer = (PFNGLVERTEXATTRIBPOINTERPROC)wglGetProcAddress("glVertexAttribPointer");
-    glEnableVertexAttribArray = (PFNGLENABLEVERTEXATTRIBARRAYPROC)wglGetProcAddress("glEnableVertexAttribArray");
 
     glGenVertexArrays(1, (GLuint*)&_vao);
     glGenBuffers(1, (GLuint*)&_vbo);
@@ -47,6 +23,13 @@ Model3D::Model3D()
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texture));
     glEnableVertexAttribArray(3);
+}
+
+//--------------------------------------------------------------
+Model3D::~Model3D()
+{
+    glDeleteVertexArrays(1, (GLuint*)&_vao);
+    glDeleteBuffers(1, (GLuint*)&_vbo);
 }
 
 //--------------------------------------------------------------

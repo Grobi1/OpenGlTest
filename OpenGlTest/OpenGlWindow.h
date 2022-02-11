@@ -1,7 +1,5 @@
 #pragma once
 #include "Mat4.h"
-//typedef void (*MouseMoveFunction)(float offsetX, float offsetY);
-//typedef void (*MouseWheelFunction)(float delte);
 
 class OpenGlWindow
 {

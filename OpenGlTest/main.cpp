@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <cstdio>
 #include <math.h>
+#include "OpenGl.h"
 #include "OpenGlWindow.h"
 #include "Vector3D.h"
 #include "Texture.h"
@@ -19,7 +20,7 @@
 int main()
 {
     OpenGlWindow window;
-
+    OpenGl::Initialize();
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0, 0, 0);
@@ -33,7 +34,6 @@ int main()
     Mat4 model;
     window._viewMatrix = &view;
     float angle = 0;
-
 
     Cube cube(0.15f);
     Torus torus;
@@ -50,7 +50,7 @@ int main()
         shaderProgram.SetMatrix("projectionMatrix", projection.Transpose());
         shaderProgram.SetMatrix("viewMatrix", view.Transpose());
 
-        //angle += 0.01f;
+        angle += 0.01f;
         
         Mat4 rotation = Mat4::Rotate(angle, 1, 0, 0);
 

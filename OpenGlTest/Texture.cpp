@@ -1,10 +1,6 @@
 #include "Texture.h"
-#include <Windows.h>
 #include <fstream>
-#include <gl/GL.h>
-#include <gl/glext.h>
-
-PFNGLACTIVETEXTUREPROC glActiveTexture;
+#include "OpenGl.h"
 
 //--------------------------------------------------------------
 Texture::Texture(std::string path)
@@ -12,14 +8,11 @@ Texture::Texture(std::string path)
     _height = 0;
     _width = 0;
 
-    glActiveTexture = (PFNGLACTIVETEXTUREPROC)wglGetProcAddress("glActiveTexture");
-
     GLuint texture;
     glGenTextures(1, &texture);
     _id = texture;
 
     Bind();
-
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_NONE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_NONE);
@@ -29,6 +22,12 @@ Texture::Texture(std::string path)
     Load(path);
 
     Unbind();
+}
+
+//--------------------------------------------------------------
+Texture::~Texture()
+{
+    glDeleteTextures(1, (GLuint*)&_id);
 }
 
 //--------------------------------------------------------------

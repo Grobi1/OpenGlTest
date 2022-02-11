@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OpenGl.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="main.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Vector3D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="OpenGl.h" />
     <ClInclude Include="Shapes.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Cube.h" />
