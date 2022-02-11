@@ -4,13 +4,15 @@
 class ShaderProgram
 {
 public:
-	ShaderProgram();
+	ShaderProgram(std::string vertexShaderPath, std::string fragmentShaderPath);
 	~ShaderProgram();
-	void Load(std::string vertexShaderPath, std::string fragmentShaderPath);
-	void Use();
-	void SetMatrix(std::string name, Mat4 mat);
+	void Bind();
+	void Unbind();
+	void SetUniformMat4(std::string name, Mat4 mat);
 private:
-	void PrintShaderError(uint32_t id);
+	int32_t GetUniformLocation(std::string name);
+	void Load(std::string vertexShaderPath, std::string fragmentShaderPath);
+	void CreateProgram();
+	void PrintShaderError(uint32_t id, std::string name);
 	uint32_t _id;
 };
-

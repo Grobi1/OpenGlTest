@@ -3,6 +3,25 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/glext.h>
+#include <iostream>
+
+
+#ifdef _DEBUG
+#define GL_CALL(function) \
+{ \
+    function; \
+    GLenum  err = glGetError(); \
+    while (err != GL_NO_ERROR)  \
+    { \
+        std::cout << "Error in " << #function << " (Error=" << err  << ")" << std::endl; \
+        err = glGetError(); \
+    } \
+};
+#else
+#define GL_CALL(function) function;
+#endif // DEBUG
+
+
 
 //Shaders
 extern PFNGLCREATESHADERPROC glCreateShader;

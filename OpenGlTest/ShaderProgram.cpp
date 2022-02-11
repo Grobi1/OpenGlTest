@@ -7,15 +7,16 @@
 #include "OpenGl.h"
 
 //--------------------------------------------------------------
-ShaderProgram::ShaderProgram()
+ShaderProgram::ShaderProgram(std::string vertexShaderPath, std::string fragmentShaderPath)
 {
     _id = 0;
+    Load(vertexShaderPath, fragmentShaderPath);
 }
 
 //--------------------------------------------------------------
 ShaderProgram::~ShaderProgram()
 {
-    glDeleteProgram(_id);
+    GL_CALL(glDeleteProgram(_id));
 }
 
 //--------------------------------------------------------------
@@ -38,41 +39,55 @@ void ShaderProgram::Load(std::string vertexShaderPath, std::string fragmentShade
 
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexCodeC, NULL);
-    glCompileShader(vertexShader);
-    PrintShaderError(vertexShader);
+    GL_CALL(glShaderSource(vertexShader, 1, &vertexCodeC, NULL));
+    GL_CALL(glCompileShader(vertexShader));
+    PrintShaderError(vertexShader, "Vertex");
 
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentCodeC, NULL);
-    glCompileShader(fragmentShader);
-    PrintShaderError(fragmentShader);
+    GL_CALL(glShaderSource(fragmentShader, 1, &fragmentCodeC, NULL));
+    GL_CALL(glCompileShader(fragmentShader));
+    PrintShaderError(fragmentShader, "Fragment");
+
     _id = glCreateProgram();
 
-    glAttachShader(_id, vertexShader);
-    glAttachShader(_id, fragmentShader);
-    glLinkProgram(_id);
+    GL_CALL(glAttachShader(_id, vertexShader));
+    GL_CALL(glAttachShader(_id, fragmentShader));
+    GL_CALL(glLinkProgram(_id));
 
-    glUseProgram(_id);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    GL_CALL(glDeleteShader(vertexShader));
+    GL_CALL(glDeleteShader(fragmentShader));
 }
 
 //--------------------------------------------------------------
-void ShaderProgram::SetMatrix(std::string name, Mat4 mat)
+void ShaderProgram::SetUniformMat4(std::string name, Mat4 mat)
 {
-    glUniformMatrix4fv(glGetUniformLocation(_id, name.c_str()), 1, GL_FALSE, mat.Data());
+    GL_CALL(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, mat.Data()));
 }
 
 //--------------------------------------------------------------
-void ShaderProgram::Use()
+int32_t ShaderProgram::GetUniformLocation(std::string name)
 {
-    if(_id >= 0)
-        glUseProgram(_id);
+    int location = glGetUniformLocation(_id, name.c_str());
+    if (location < 0)
+        std::cout << "Error: Uniform (name=" << name << ") does not exists" << std::endl;
+    return location;
 }
 
 //--------------------------------------------------------------
-void ShaderProgram::PrintShaderError(GLuint id)
+void ShaderProgram::Bind()
+{
+    GL_CALL(glUseProgram(_id));
+}
+
+
+//--------------------------------------------------------------
+void ShaderProgram::Unbind()
+{
+    GL_CALL(glUseProgram(0));
+}
+
+//--------------------------------------------------------------
+void ShaderProgram::PrintShaderError(uint32_t id, std::string name)
 {
     GLint isCompiled = 0;
     glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
@@ -85,7 +100,7 @@ void ShaderProgram::PrintShaderError(GLuint id)
 
         glDeleteShader(id);
 
-        std::cout << "Error in Shader id=" << id << std::endl;
+        std::cout << "Error:  Shader (name=" << name << ", id=" << id << ")" << std::endl;
         for (GLchar i : errorLog)
             std::cout << i;
         return;
