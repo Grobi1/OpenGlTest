@@ -27,7 +27,7 @@ int main()
 
     ShaderProgram shaderProgram = ShaderProgram("Shaders/shader.vert", "Shaders/shader.frag");
 
-    Mat4 projection = Mat4::Perspective(1, 1, 0.5, 10); // Is the Camera lense
+    Mat4 projection = Mat4::Perspective(1, 1, 1, 10); // Is the Camera lense
     //projection.Projection(1, 2, 0.5f, 10);
     Mat4 view; // Is the Camera position
     Mat4 model;
@@ -58,22 +58,21 @@ int main()
         //shaderProgram.SetMatrix("modelMatrix", model.Transpose());
         //cube.Render();
 
-        model = Mat4::Translate(0, 0, -3) * rotation;
-        shaderProgram.SetUniformMat4("normalMatrix", rotation.Transpose());
-        
-        shaderProgram.SetUniformMat4("modelMatrix", model.Transpose());
-        torus.Render();
 
+        shaderProgram.SetUniformMat4("normalMatrix", rotation.Transpose());
         model = Mat4::Translate(0, 0, -3) * rotation;// *Mat4::Translate(0.2, 0, 0);
         shaderProgram.SetUniformMat4("modelMatrix", model.Transpose());
         sphere.Render();
 
 
-        rotation = Mat4::Rotate(angle, 0, 1, 0);
-        model = Mat4::Translate(0, 0, -3) * rotation;
-        shaderProgram.SetUniformMat4("normalMatrix", rotation.Transpose());
-        shaderProgram.SetUniformMat4("modelMatrix", model.Transpose());
-        torus2.Render();
+        //shaderProgram.SetUniformMat4("modelMatrix", model.Transpose());
+        //torus.Render();
+
+        //rotation = Mat4::Rotate(angle, 0, 1, 0);
+        //model = Mat4::Translate(0, 0, -3) * rotation;
+        //shaderProgram.SetUniformMat4("normalMatrix", rotation.Transpose());
+        //shaderProgram.SetUniformMat4("modelMatrix", model.Transpose());
+        //torus2.Render();
 
 
 
@@ -85,4 +84,5 @@ int main()
     system("pause");
     return 0;
 }
+
 

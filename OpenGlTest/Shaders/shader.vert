@@ -13,14 +13,19 @@ out vec4 fragmentColor;
 out vec3 fragmentNormal;
 out vec3 fragmentCurrentPosition;
 out vec2 fragmentTexture;
-out vec3 fragmentCameraPosition;
 
 void main()
-{
-   fragmentCurrentPosition = vec3(projectionMatrix * modelMatrix * vec4(position, 1.0));
+{   
    gl_Position = projectionMatrix  * viewMatrix * modelMatrix * vec4(position, 1.0);
    fragmentColor = color;
    fragmentNormal = normalize(vec3(normalMatrix * vec4(normal, 1.0)));
-   fragmentTexture = fragmentNormal.xy * 0.5 + 0.5;
-   fragmentCameraPosition = viewMatrix[3].xyz;
+   
+  
+   fragmentCurrentPosition = normalize(vec3(viewMatrix * modelMatrix * vec4(position, 1.0)));
+   vec3 cameraPos = viewMatrix[3].xyz;   
+   vec3 incident = normalize(cameraPos - fragmentCurrentPosition);
+   vec3 reflection = fragmentCurrentPosition - fragmentNormal * dot(fragmentCurrentPosition, fragmentNormal); 
+   reflection.z += 1;
+   float m = 1.0 / (sqrt(dot(reflection, reflection)));
+   fragmentTexture = reflection.xy * m * 0.5 + 0.5;
 }
