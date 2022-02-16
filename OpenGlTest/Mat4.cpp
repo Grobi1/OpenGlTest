@@ -38,13 +38,42 @@ Mat4 Mat4::Transpose() const
 //--------------------------------------------------------------
 Mat4 Mat4::Perspective(float aspect, float fov, float near, float far)
 {
-    Mat4 proj;
-    proj._data[0][0] = 1 / (aspect * tanf(fov / 2));
-    proj._data[1][1] = 1 / (tanf(fov / 2));
-    proj._data[2][2] = ((far + near) / (near - far));
-    proj._data[2][3] = ((2 * far * near) / (near - far));
-    proj._data[3][2] = -1;
-    return proj;
+    Mat4 mat;
+    mat._data[0][0] = 1 / (aspect * tanf(fov / 2));
+    mat._data[1][1] = 1 / (tanf(fov / 2));
+    mat._data[2][2] = ((far + near) / (near - far));
+    mat._data[2][3] = ((2 * far * near) / (near - far));
+    mat._data[3][2] = -1;
+    return mat;
+}
+
+
+//--------------------------------------------------------------
+Mat4 Mat4::Frustum(float left, float right, float bottom, float top, float near, float far)
+{
+    Mat4 mat;
+    mat._data[0][0] = 2 * near / (right - left);
+    mat._data[0][2] = (right + left) / (right - left);
+    mat._data[1][1] = 2 * near / (top - bottom);
+    mat._data[1][2] = (top + bottom) / (top - bottom);
+    mat._data[2][2] = -(far + near) / (far - near);
+    mat._data[2][3] = -(2 * far * near) / (far - near);
+    mat._data[3][2] = -1;
+    return mat;
+}
+
+//--------------------------------------------------------------
+Mat4 Mat4::Ortho(float left, float right, float bottom, float top, float near, float far)
+{
+    Mat4 mat;
+    mat._data[0][0] = 2 / (right - left);
+    mat._data[0][3] = -((right + left) / (right - left));
+    mat._data[1][1] = 2  / (top - bottom);
+    mat._data[1][3] = -((top + bottom) / (top - bottom));
+    mat._data[2][2] = -2 / (far - near);
+    mat._data[2][3] = -((far + near) / (far - near));
+    mat._data[3][3] = 1;
+    return mat;
 }
 
 //--------------------------------------------------------------

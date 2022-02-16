@@ -10,22 +10,19 @@ uniform mat4 modelMatrix;
 uniform mat4 normalMatrix;
 
 out vec4 fragmentColor;
-out vec3 fragmentNormal;
-out vec3 fragmentCurrentPosition;
 out vec2 fragmentTexture;
 
 void main()
 {   
    gl_Position = projectionMatrix  * viewMatrix * modelMatrix * vec4(position, 1.0);
    fragmentColor = color;
-   fragmentNormal = normalize(vec3(normalMatrix * vec4(normal, 1.0)));
    
-  
-   fragmentCurrentPosition = normalize(vec3(viewMatrix * modelMatrix * vec4(position, 1.0)));
-   vec3 cameraPos = viewMatrix[3].xyz;   
-   vec3 incident = normalize(cameraPos - fragmentCurrentPosition);
-   vec3 reflection = fragmentCurrentPosition - fragmentNormal * dot(fragmentCurrentPosition, fragmentNormal); 
-   reflection.z += 1;
-   float m = 1.0 / (sqrt(dot(reflection, reflection)));
-   fragmentTexture = reflection.xy * m * 0.5 + 0.5;
+   mat4 modelViewMatrix = viewMatrix * modelMatrix; 
+   vec3 myEyeVertex = vec3(modelViewMatrix * vec4(position, 1.0));
+   myEyeVertex = normalize(myEyeVertex);
+   vec3 myEyeNormal = vec3(modelViewMatrix * vec4(normal, 0.0));
+   vec3 reflectionVector = myEyeVertex - myEyeNormal * 2.0 * dot(myEyeVertex, myEyeNormal); 
+   reflectionVector.z += 1;
+   float m = 1.0 / (2.0 * sqrt(dot(reflectionVector, reflectionVector)));
+   fragmentTexture = reflectionVector.xy * m + 0.5;
 }
